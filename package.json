@@ -4,7 +4,7 @@
   "description": "An example cross platform application",
   "main": "index.js",
   "scripts": {
-    "start": "npm run bundle && NODE_ENV=production node ./server",
+    "start": "npm run bundle",
     "dev": "nodemon --watch server --ignore server/config/config.json --watch webpack --exec node ./server",
     "bundle": "node node_modules/.bin/webpack -p --progress --config ./webpack/webpack.config.prod.js"
   },
