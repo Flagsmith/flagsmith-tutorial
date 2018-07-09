@@ -9,9 +9,8 @@
     "bundle": "node node_modules/.bin/webpack -p --progress --config ./webpack/webpack.config.prod.js"
   },
   "dependencies": {
-    "todomvc-app-css": "^2.0.0",
-    "todomvc-common": "^1.0.1",
     "bootstrap": "4.0.0-alpha.6",
+    "bullet-train-client": "0.0.35",
     "classnames": "^2.2.6",
     "pollyfill-react-native": "^1.0.3",
     "promise-polyfill": "^7.1.2",
@@ -20,7 +19,9 @@
     "react-router": "4.2.0",
     "react-router-dom": "4.2.2",
     "ssg-node-express": "4.16.3",
-    "ssg-util": "0.0.2"
+    "ssg-util": "0.0.2",
+    "todomvc-app-css": "^2.0.0",
+    "todomvc-common": "^1.0.1"
   },
   "devDependencies": {
     "babel-core": "6.26.0",

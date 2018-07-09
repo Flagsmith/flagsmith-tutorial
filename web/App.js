@@ -1,3 +1,13 @@
+var declareWinner = true;
+import bulletTrain from "bullet-train-client"; //Add this line if you're using bulletTrain via npm
+
+bulletTrain.init({
+	environmentID:"2KqnqeE5HCfCDV9xaZEdg4",
+    onChange: (oldFlags,params)=>{ //Occurs whenever flags are changed
+		declareWinner = bulletTrain.hasFeature("declare-winner");
+	}
+});
+
 import React from 'react'
 function Square(props) {
     return (
@@ -5,6 +15,27 @@ function Square(props) {
             {props.value}
         </button>
     );
+}
+
+function calculateWinner(squares) {
+    if (!declareWinner) return null;
+    const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
+    for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+            return squares[a];
+        }
+    }
+    return null;
 }
 
 class Board extends React.Component {
@@ -18,6 +49,9 @@ class Board extends React.Component {
 
     handleClick(i) {
         const squares = this.state.squares.slice();
+        if (calculateWinner(squares) || squares[i]) {
+            return;
+        }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             squares: squares,
@@ -35,7 +69,13 @@ class Board extends React.Component {
     }
 
     render() {
-        const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+        const winner = calculateWinner(this.state.squares);
+        let status;
+        if (winner) {
+            status = 'Winner: ' + winner;
+        } else {
+            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+        }
 
         return (
             <div>
@@ -65,7 +105,7 @@ export default class extends React.Component {
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board/>
+                    <Board />
                 </div>
                 <div className="game-info">
                     <div>{/* status */}</div>
