@@ -3,9 +3,14 @@ import bulletTrain from "bullet-train-client"; //Add this line if you're using b
 
 import React from 'react'
 function Square(props) {
+    const {shape1, shape1Color, shape2Color, squareWidth, squareHeight} = props;
     return (
-        <button className="square" onClick={props.onClick}>
-            {props.value}
+        <button
+            className="square"
+            onClick={props.onClick}
+            style={squareWidth && squareHeight ? {width: squareWidth, height: squareHeight} : {}}
+        >
+            <span style={{color: props.value === shape1 ? shape1Color : shape2Color}}>{props.value}</span>
         </button>
     );
 }
@@ -37,6 +42,8 @@ class Board extends React.Component {
         this.state = {
             squares: Array(9).fill(null),
             xIsNext: true,
+            shape1Color: 'black',
+            shape2Color: 'black'
         };
     }
 
@@ -46,7 +53,7 @@ class Board extends React.Component {
         if (calculateWinner(squares) || squares[i]) {
             return;
         }
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
+        squares[i] = this.state.xIsNext ? this.state.shape1 : this.state.shape2;
         this.setState({
             squares: squares,
             xIsNext: !this.state.xIsNext,
@@ -58,7 +65,15 @@ class Board extends React.Component {
             environmentID:"2KqnqeE5HCfCDV9xaZEdg4",
             onChange: (oldFlags,params)=>{ //Occurs whenever flags are changed
                 declareWinner = bulletTrain.hasFeature("declare-winner");
-                this.setState({selected: !bulletTrain.hasFeature("select-who-goes-first")});
+                this.setState({
+                    selected: !bulletTrain.hasFeature("select-who-goes-first"),
+                    shape1: bulletTrain.getValue("shape-1"),
+                    shape2: bulletTrain.getValue("shape-2"),
+                    shape1Color: bulletTrain.getValue("shape-1-color"),
+                    shape2Color: bulletTrain.getValue("shape-2-color"),
+                    squareWidth: parseInt(bulletTrain.getValue("square-width")),
+                    squareHeight: parseInt(bulletTrain.getValue("square-height"))
+                });
             }
         });
     }
@@ -66,6 +81,7 @@ class Board extends React.Component {
     renderSquare(i) {
         return (
             <Square
+                {...this.state}
                 value={this.state.squares[i]}
                 onClick={() => this.handleClick(i)}
             />
@@ -78,7 +94,13 @@ class Board extends React.Component {
         if (winner) {
             status = 'Winner: ' + winner;
         } else {
-            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+            status = (
+                <div>Next player:
+                    <span style={{color: this.state.xIsNext ? this.state.shape1Color : this.state.shape2Color}}>
+                        {(this.state.xIsNext ? this.state.shape1 : this.state.shape2)}
+                    </span>
+                </div>
+            );
         }
 
         return (
@@ -86,8 +108,8 @@ class Board extends React.Component {
                 {!this.state.selected ? (
                     <div>
                         Who goes first?
-                        <button onClick={() => this.setState({selected: true})}>X</button>
-                        <button onClick={() => this.setState({selected: true, xIsNext: true})}>O</button>
+                        <button onClick={() => this.setState({selected: true})}>{this.state.shape1}</button>
+                        <button onClick={() => this.setState({selected: true, xIsNext: false})}>{this.state.shape2}</button>
                     </div>
                 ) : (
                     <div className="status">{status}</div>
