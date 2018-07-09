@@ -1,13 +1,6 @@
 var declareWinner = true;
 import bulletTrain from "bullet-train-client"; //Add this line if you're using bulletTrain via npm
 
-bulletTrain.init({
-	environmentID:"2KqnqeE5HCfCDV9xaZEdg4",
-    onChange: (oldFlags,params)=>{ //Occurs whenever flags are changed
-		declareWinner = bulletTrain.hasFeature("declare-winner");
-	}
-});
-
 import React from 'react'
 function Square(props) {
     return (
@@ -48,6 +41,7 @@ class Board extends React.Component {
     }
 
     handleClick(i) {
+        if (!this.state.selected) return;
         const squares = this.state.squares.slice();
         if (calculateWinner(squares) || squares[i]) {
             return;
@@ -56,6 +50,16 @@ class Board extends React.Component {
         this.setState({
             squares: squares,
             xIsNext: !this.state.xIsNext,
+        });
+    }
+
+    componentDidMount() {
+        bulletTrain.init({
+            environmentID:"2KqnqeE5HCfCDV9xaZEdg4",
+            onChange: (oldFlags,params)=>{ //Occurs whenever flags are changed
+                declareWinner = bulletTrain.hasFeature("declare-winner");
+                this.setState({selected: !bulletTrain.hasFeature("select-who-goes-first")});
+            }
         });
     }
 
@@ -79,7 +83,15 @@ class Board extends React.Component {
 
         return (
             <div>
-                <div className="status">{status}</div>
+                {!this.state.selected ? (
+                    <div>
+                        Who goes first?
+                        <button onClick={() => this.setState({selected: true})}>X</button>
+                        <button onClick={() => this.setState({selected: true, xIsNext: true})}>O</button>
+                    </div>
+                ) : (
+                    <div className="status">{status}</div>
+                )}
                 <div className="board-row">
                     {this.renderSquare(0)}
                     {this.renderSquare(1)}
