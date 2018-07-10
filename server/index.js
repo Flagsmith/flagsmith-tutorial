@@ -12,7 +12,9 @@ if (isDev) { //Serve files from src directory and use webpack-dev-server
     console.log('Enabled Webpack Hot Reloading');
     webpackMiddleware(app);
     app.set('views', 'web/');
-    app.use(express.static('web'));
+    app.use(express.static('web', {
+        index: false
+    }));
 } else { //Serve files from build directory
     console.log('Running production mode');
     app.use(express.static('build'));
