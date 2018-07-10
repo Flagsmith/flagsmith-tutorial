@@ -1,4 +1,3 @@
-var declareWinner = true;
 import React from 'react'
 function Square(props) {
     return (
@@ -9,7 +8,6 @@ function Square(props) {
 }
 
 function calculateWinner(squares) {
-    if (!declareWinner) return null;
     const lines = [
         [0, 1, 2],
         [3, 4, 5],
